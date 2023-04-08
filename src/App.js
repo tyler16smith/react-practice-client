@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
 
-function App() {
+export default function App() {
+  
+  const [backendData, setBackendData] = useState([])
+  
+  useEffect(() => {
+    fetch("/api")
+        .then(response => response.json())
+        .then(data => {
+          setBackendData(data.users);
+          console.log(data.users);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+  }, [])
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {backendData.length === 0 ? (
+        <p>No data</p>
+      ) : (
+        <div>
+          {backendData && backendData.map(function(user, index) {
+            return (
+              <p key={index}>{user}</p>
+            )
+          })}
+        </div>
+      )}
     </div>
-  );
+  )
 }
-
-export default App;
