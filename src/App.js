@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import PaymentForm from './components/PaymentForm';
 
 export default function App() {
   
-  const [backendData, setBackendData] = useState([])
+  const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+  const [backendData, setBackendData] = useState([]);
   
   useEffect(() => {
-    fetch("/api")
-        .then(response => response.json())
-        .then(data => {
-          setBackendData(data.users);
-          console.log(data.users);
-        })
-        .catch(error => console.error('Error fetching data:', error));
+    // http://54.159.163.77:8080/api
+    fetch('/api')
+      .then(response => response.json())
+      .then(data => {
+        setBackendData(data.users)
+      })
+      .catch(error => console.error('Error fetching data:', error))
   }, [])
   
   return (
@@ -27,6 +31,9 @@ export default function App() {
           })}
         </div>
       )}
+      <Elements stripe={stripePromise}>
+        <PaymentForm />
+      </Elements>
     </div>
   )
 }
